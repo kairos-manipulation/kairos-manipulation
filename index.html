@@ -1,4 +1,4 @@
-```html id="kairos_full_html_corrected"
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -196,13 +196,13 @@
       display:block;
     }
 
-    .media-placeholder{
+    .media-frame{
       width:100%;
       padding:28px 22px;
       text-align:center;
     }
 
-    .media-placeholder img{
+    .media-frame img{
       width:min(920px,100%);
       margin:0 auto;
     }
@@ -419,22 +419,7 @@
       width:100%;
       height:auto;
       display:block;
-    }
-
-    .empty-video{
-      min-height:190px;
-      display:grid;
-      place-items:center;
-      padding:20px;
-      text-align:center;
-      color:var(--muted);
-      background:linear-gradient(135deg,#f8fafc,#eef6ff);
-    }
-
-    .empty-video strong{
-      display:block;
-      color:var(--text);
-      margin-bottom:4px;
+      background:#000;
     }
 
     code{
@@ -496,7 +481,7 @@
         <a href="#abstract">Abstract</a>
         <a href="#approach">Approach</a>
         <a href="#keyframes">Keyframes</a>
-        <a href="#results">Results</a>
+        <a href="#demonstrations">Demonstrations</a>
         <a href="#bibtex">BibTeX</a>
       </div>
     </nav>
@@ -522,13 +507,13 @@
       <div class="buttons">
         <a class="btn primary" href="#" target="_blank" rel="noopener">📄 Paper coming soon</a>
         <a class="btn" href="https://github.com/kairos-manipulation" target="_blank" rel="noopener">Project</a>
-        <a class="btn" href="#results">🎬 Videos</a>
+        <a class="btn" href="#demonstrations">🎬 Demonstrations</a>
         <a class="btn" href="#bibtex">🔖 BibTeX</a>
       </div>
 
       <div class="hero-card">
         <div class="hero-media">
-          <div class="media-placeholder">
+          <div class="media-frame">
             <img src="assets/images/teaser.svg" alt="KAIROS teaser diagram" />
           </div>
         </div>
@@ -690,46 +675,31 @@
       </div>
     </div>
 
-    <h2 id="results">Videos and results</h2>
-    <p>
-      Example manipulation videos showing keyframe-guided future imagination and robot manipulation rollouts.
-    </p>
+    <h2 id="demonstrations">Demonstrations</h2>
 
     <div class="grid two">
       <div class="video-card">
         <video controls playsinline muted loop preload="metadata">
           <source src="assets/videos/open_drawer.mp4" type="video/mp4" />
         </video>
-        <div class="empty-video">
-          <div><strong>Open drawer</strong>Video preview</div>
-        </div>
       </div>
 
       <div class="video-card">
         <video controls playsinline muted loop preload="metadata">
           <source src="assets/videos/open_single_door.mp4" type="video/mp4" />
         </video>
-        <div class="empty-video">
-          <div><strong>Open single door</strong>Video preview</div>
-        </div>
       </div>
 
       <div class="video-card">
         <video controls playsinline muted loop preload="metadata">
           <source src="assets/videos/close_drawer.mp4" type="video/mp4" />
         </video>
-        <div class="empty-video">
-          <div><strong>Close drawer</strong>Video preview</div>
-        </div>
       </div>
 
       <div class="video-card">
         <video controls playsinline muted loop preload="metadata">
           <source src="assets/videos/push_into_drawer.mp4" type="video/mp4" />
         </video>
-        <div class="empty-video">
-          <div><strong>Push into drawer</strong>Video preview</div>
-        </div>
       </div>
     </div>
 
@@ -868,34 +838,7 @@
       },450);
     }
 
-    function hideBrokenVideos(){
-      document.querySelectorAll(".video-card").forEach(card => {
-        const video = card.querySelector("video");
-        const placeholder = card.querySelector(".empty-video");
-
-        if(!video || !placeholder) return;
-
-        video.addEventListener("loadeddata", () => {
-          placeholder.style.display = "none";
-          video.style.display = "block";
-        });
-
-        video.addEventListener("error", () => {
-          video.style.display = "none";
-          placeholder.style.display = "grid";
-        });
-
-        setTimeout(() => {
-          if(video.readyState === 0){
-            video.style.display = "none";
-            placeholder.style.display = "grid";
-          }
-        }, 700);
-      });
-    }
-
     runPipeline();
-    hideBrokenVideos();
   </script>
 </body>
 </html>
