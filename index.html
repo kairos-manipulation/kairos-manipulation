@@ -1,370 +1,518 @@
-```html
+```html id="kairos_full_html_corrected"
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <title>KAIROS: Keyframe-Aligned Long-Horizon Video Imagination for Robot Manipulation</title>
-  <meta name="description" content="KAIROS uses semantic keyframes and future video representations to support long-horizon robot manipulation." />
+  <meta name="description" content="KAIROS generates semantic keyframes, long-horizon robot videos, and video-latent action signals for manipulation." />
 
   <meta property="og:title" content="KAIROS: Keyframe-Aligned Long-Horizon Video Imagination for Robot Manipulation" />
-  <meta property="og:description" content="Semantic keyframes and future video representations for long-horizon robot manipulation." />
+  <meta property="og:description" content="Semantic keyframes as anchors for stable long-horizon robot video and action prediction." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/images/teaser.svg" />
 
   <style>
-    :root {
-      --text: #111827;
-      --muted: #4b5563;
-      --line: #e5e7eb;
-      --bg: #ffffff;
-      --soft: #f9fafb;
-      --accent: #2563eb;
-      --accent-dark: #1e40af;
-      --shadow: 0 18px 45px rgba(17, 24, 39, 0.08);
+    :root{
+      --text:#0f172a;
+      --muted:#475569;
+      --line:#e2e8f0;
+      --bg:#ffffff;
+      --soft:#f8fafc;
+      --soft2:#eef6ff;
+      --accent:#2563eb;
+      --accent2:#7c3aed;
+      --good:#16a34a;
+      --warn:#f59e0b;
+      --shadow:0 18px 50px rgba(15,23,42,.08);
     }
 
-    * {
-      box-sizing: border-box;
+    *{ box-sizing:border-box; }
+
+    html{ scroll-behavior:smooth; }
+
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(37,99,235,.10), transparent 35%),
+        radial-gradient(circle at 90% 15%, rgba(124,58,237,.10), transparent 30%),
+        var(--bg);
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height:1.62;
     }
 
-    html {
-      scroll-behavior: smooth;
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .wrap{
+      max-width:1120px;
+      margin:0 auto;
+      padding:30px 18px 72px;
     }
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.65;
+    .nav{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:28px;
     }
 
-    a {
-      color: var(--accent);
-      text-decoration: none;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      letter-spacing:.5px;
     }
 
-    a:hover {
-      text-decoration: underline;
+    .logo{
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;
+      box-shadow:0 8px 22px rgba(37,99,235,.25);
+      font-size:18px;
     }
 
-    .wrap {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 28px 18px 56px;
+    .navlinks{
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      font-size:14px;
+      color:var(--muted);
     }
 
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 46px;
+    .navlinks a{ color:var(--muted); font-weight:650; }
+    .navlinks a:hover{ color:var(--accent); text-decoration:none; }
+
+    header{
+      text-align:center;
+      padding:26px 0 10px;
     }
 
-    .brand {
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      font-size: 18px;
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid #dbeafe;
+      background:rgba(239,246,255,.75);
+      color:#1d4ed8;
+      border-radius:999px;
+      padding:6px 12px;
+      font-size:13px;
+      font-weight:750;
+      margin-bottom:16px;
     }
 
-    .navlinks {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-      font-size: 14px;
+    h1{
+      margin:0 auto 14px;
+      max-width:960px;
+      font-size:42px;
+      line-height:1.12;
+      letter-spacing:-.8px;
+      font-weight:900;
     }
 
-    .navlinks a {
-      color: var(--muted);
-      font-weight: 600;
+    .subtitle{
+      max-width:880px;
+      margin:0 auto 18px;
+      color:var(--muted);
+      font-size:19px;
+      line-height:1.55;
     }
 
-    .navlinks a:hover {
-      color: var(--accent);
-      text-decoration: none;
+    .authors{
+      margin:12px 0 4px;
+      color:var(--muted);
+      font-size:15px;
     }
 
-    header {
-      text-align: center;
-      padding: 16px 0 20px;
+    .authors strong{ color:var(--text); }
+
+    .affil{
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:16px;
     }
 
-    h1 {
-      max-width: 900px;
-      margin: 0 auto 18px;
-      font-size: 42px;
-      line-height: 1.12;
-      letter-spacing: -0.03em;
+    .buttons{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin:18px 0 24px;
     }
 
-    .subtitle {
-      max-width: 820px;
-      margin: 0 auto 20px;
-      color: var(--muted);
-      font-size: 19px;
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--line);
+      padding:9px 14px;
+      border-radius:999px;
+      background:#fff;
+      color:var(--text);
+      font-weight:750;
+      font-size:14px;
+      box-shadow:0 6px 18px rgba(15,23,42,.05);
     }
 
-    .authors {
-      color: var(--muted);
-      font-size: 15px;
-      margin-top: 12px;
+    .btn.primary{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff;
+      border-color:transparent;
     }
 
-    .authors strong {
-      color: var(--text);
+    .btn:hover{ text-decoration:none; transform:translateY(-1px); }
+
+    .hero-card{
+      margin:22px auto 0;
+      max-width:1040px;
+      border:1px solid var(--line);
+      border-radius:24px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:var(--shadow);
     }
 
-    .affil {
-      color: var(--muted);
-      font-size: 14px;
-      margin-top: 4px;
+    .hero-media{
+      min-height:270px;
+      display:grid;
+      place-items:center;
+      background:
+        linear-gradient(135deg, rgba(37,99,235,.08), rgba(124,58,237,.08)),
+        var(--soft);
     }
 
-    .buttons {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin: 26px 0 34px;
+    .hero-media video,
+    .hero-media img{
+      width:100%;
+      height:auto;
+      display:block;
     }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      padding: 10px 16px;
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: 0 8px 22px rgba(17, 24, 39, 0.05);
+    .media-placeholder{
+      width:100%;
+      padding:28px 22px;
+      text-align:center;
     }
 
-    .btn.primary {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
+    .media-placeholder img{
+      width:min(920px,100%);
+      margin:0 auto;
     }
 
-    .btn:hover {
-      text-decoration: none;
-      transform: translateY(-1px);
+    .cap{
+      padding:12px 16px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:13px;
+      background:#fff;
     }
 
-    .hero {
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      overflow: hidden;
-      background: var(--soft);
-      box-shadow: var(--shadow);
-      margin-top: 18px;
+    h2{
+      margin:34px 0 12px;
+      padding-top:20px;
+      border-top:1px solid var(--line);
+      font-size:24px;
+      line-height:1.25;
+      font-weight:900;
+      letter-spacing:-.2px;
     }
 
-    .hero img,
-    .hero video {
-      width: 100%;
-      display: block;
+    h3{
+      margin:18px 0 8px;
+      font-size:17px;
+      line-height:1.3;
+      font-weight:850;
     }
 
-    .caption {
-      padding: 14px 18px;
-      background: #fff;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 14px;
+    p{ margin:10px 0; }
+
+    .grid{
+      display:grid;
+      gap:14px;
     }
 
-    section {
-      margin-top: 48px;
+    .grid.two{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .grid.three{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .grid.four{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.82);
+      padding:16px;
+      box-shadow:0 8px 24px rgba(15,23,42,.04);
     }
 
-    h2 {
-      font-size: 26px;
-      line-height: 1.25;
-      margin: 0 0 14px;
-      letter-spacing: -0.02em;
+    .card strong{
+      display:block;
+      font-size:15px;
+      color:var(--text);
+      margin-bottom:5px;
     }
 
-    p {
-      margin: 10px 0;
+    .card p{
+      color:var(--muted);
+      font-size:14px;
+      margin:0;
     }
 
-    .lead {
-      color: var(--muted);
-      font-size: 17px;
-      max-width: 920px;
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
     }
 
-    .grid {
-      display: grid;
-      gap: 16px;
+    .pill{
+      border:1px solid #dbeafe;
+      color:#1d4ed8;
+      background:#eff6ff;
+      padding:4px 9px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:750;
     }
 
-    .grid.three {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .pipeline{
+      margin-top:16px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:#fff;
+      overflow:hidden;
+      box-shadow:var(--shadow);
     }
 
-    .grid.two {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .pipeline-head{
+      padding:16px 18px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg,#fff,#fbfdff);
     }
 
-    .card {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-      background: #fff;
-      box-shadow: 0 10px 30px rgba(17, 24, 39, 0.04);
+    .pipeline-head h3{
+      margin:0 0 4px;
+      font-size:18px;
     }
 
-    .card h3 {
-      margin: 0 0 8px;
-      font-size: 17px;
+    .pipeline-head p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
     }
 
-    .card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
+    .pipeline-inner{
+      padding:18px 12px 12px;
+      overflow:hidden;
     }
 
-    .pipeline {
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 22px;
-      background: linear-gradient(180deg, #fff, #f9fafb);
-      box-shadow: var(--shadow);
+    .pipeline-svg{
+      width:100%;
+      height:auto;
+      display:block;
     }
 
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 18px;
+    .step-box{
+      fill:#fff;
+      stroke:#cbd5e1;
+      stroke-width:2;
+      rx:20;
+      ry:20;
+      filter:drop-shadow(0 8px 20px rgba(15,23,42,.06));
+      transition:fill .25s ease, stroke .25s ease;
     }
 
-    .step {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 14px;
-      background: #fff;
-      text-align: center;
+    .step-label{
+      fill:#0f172a;
+      font-size:14px;
+      font-weight:800;
+      text-anchor:middle;
     }
 
-    .step .icon {
-      font-size: 26px;
-      margin-bottom: 6px;
+    .step-sub{
+      fill:#64748b;
+      font-size:11px;
+      text-anchor:middle;
     }
 
-    .step strong {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 4px;
+    .step-icon{
+      font-size:22px;
+      text-anchor:middle;
     }
 
-    .step span {
-      display: block;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.4;
+    .step-group{
+      opacity:.28;
+      transition:opacity .35s ease;
     }
 
-    .video-card {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      overflow: hidden;
-      background: #000;
-      box-shadow: 0 12px 34px rgba(17, 24, 39, 0.08);
+    .step-group.visible{ opacity:1; }
+    .step-group.active .step-box{ fill:#eff6ff; stroke:#60a5fa; }
+    .step-group.done .step-box{ fill:#f0fdf4; stroke:#4ade80; }
+
+    .flow-progress{
+      fill:none;
+      stroke:#2563eb;
+      stroke-width:5;
+      stroke-linecap:round;
+      stroke-dasharray:1000;
+      stroke-dashoffset:1000;
+      filter:drop-shadow(0 0 3px rgba(37,99,235,.35));
     }
 
-    .video-card video {
-      width: 100%;
-      display: block;
-      background: #000;
+    .pulse-dot{
+      fill:#2563eb;
+      opacity:0;
+      filter:drop-shadow(0 0 6px rgba(37,99,235,.55));
     }
 
-    .video-title {
-      padding: 12px 14px;
-      background: #fff;
-      color: var(--text);
-      font-weight: 700;
-      font-size: 14px;
-      border-top: 1px solid var(--line);
+    .note-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+      padding:4px 14px 18px;
     }
 
-    footer {
-      margin-top: 56px;
-      padding-top: 18px;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 13px;
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
+    .note{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      padding:12px;
+      color:var(--muted);
+      font-size:12.5px;
+      line-height:1.45;
+      opacity:.58;
+      transition:all .3s ease;
     }
 
-    @media (max-width: 900px) {
-      h1 {
-        font-size: 34px;
-      }
-
-      .grid.three,
-      .grid.two,
-      .steps {
-        grid-template-columns: 1fr 1fr;
-      }
+    .note strong{
+      display:block;
+      color:var(--text);
+      margin-bottom:4px;
+      font-size:12.5px;
     }
 
-    @media (max-width: 640px) {
-      nav {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    .note.active{
+      opacity:1;
+      border-color:#93c5fd;
+      background:#f8fbff;
+      box-shadow:0 5px 18px rgba(37,99,235,.08);
+      transform:translateY(-1px);
+    }
 
-      h1 {
-        font-size: 29px;
-      }
+    .figure,
+    .video-card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:var(--soft);
+      box-shadow:0 10px 30px rgba(15,23,42,.05);
+    }
 
-      .subtitle {
-        font-size: 16px;
-      }
+    .figure img,
+    .video-card video{
+      width:100%;
+      height:auto;
+      display:block;
+    }
 
-      .grid.three,
-      .grid.two,
-      .steps {
-        grid-template-columns: 1fr;
-      }
+    .empty-video{
+      min-height:190px;
+      display:grid;
+      place-items:center;
+      padding:20px;
+      text-align:center;
+      color:var(--muted);
+      background:linear-gradient(135deg,#f8fafc,#eef6ff);
+    }
+
+    .empty-video strong{
+      display:block;
+      color:var(--text);
+      margin-bottom:4px;
+    }
+
+    code{
+      background:#eef2ff;
+      border:1px solid #e0e7ff;
+      padding:1px 6px;
+      border-radius:999px;
+      font-size:.92em;
+    }
+
+    pre{
+      margin:0;
+      padding:15px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#0b1220;
+      color:#e5e7eb;
+      overflow:auto;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .footer{
+      margin-top:32px;
+      padding-top:16px;
+      border-top:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    @media (max-width:980px){
+      h1{ font-size:34px; }
+      .grid.three,.grid.four{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .note-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    }
+
+    @media (max-width:700px){
+      .nav{ align-items:flex-start; flex-direction:column; }
+      .grid.two,.grid.three,.grid.four,.note-grid{ grid-template-columns:1fr; }
+      h1{ font-size:29px; }
+      .subtitle{ font-size:16px; }
+      .wrap{ padding-left:14px; padding-right:14px; }
     }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-    <nav>
-      <div class="brand">KAIROS</div>
+    <nav class="nav">
+      <div class="brand">
+        <div class="logo">K</div>
+        <div>KAIROS</div>
+      </div>
       <div class="navlinks">
-        <a href="#overview">Overview</a>
+        <a href="#abstract">Abstract</a>
         <a href="#approach">Approach</a>
-        <a href="#videos">Videos</a>
+        <a href="#keyframes">Keyframes</a>
+        <a href="#results">Results</a>
+        <a href="#bibtex">BibTeX</a>
       </div>
     </nav>
 
     <header>
+      <div class="tag">Keyframe-guided robot video/action learning</div>
+
       <h1>KAIROS: Keyframe-Aligned Long-Horizon Video Imagination for Robot Manipulation</h1>
 
       <p class="subtitle">
-        KAIROS uses semantic keyframes to structure long-horizon robot manipulation, generate future video trajectories,
-        and provide compact future representations for action prediction.
+        We generate semantic keyframes as long-horizon anchors, synthesize stable robot videos between them,
+        and use the resulting future video latents to guide action prediction.
       </p>
 
       <div class="authors">
-        <strong>Mohammad Khoshnazar</strong> · <strong>Zhiyuan Gao</strong> ·
-        <strong>Andrew Melnik</strong> · <strong>Michael Beetz</strong>
+        <strong>Mohammad Khoshnazar</strong> · <strong>Zhiyuan Gao</strong> · <strong>Andrew Melnik</strong> · <strong>Michael Beetz</strong>
       </div>
 
       <div class="affil">
@@ -372,143 +520,382 @@
       </div>
 
       <div class="buttons">
-        <a class="btn primary" href="#overview">Project Overview</a>
-        <a class="btn" href="#videos">Watch Videos</a>
+        <a class="btn primary" href="#" target="_blank" rel="noopener">📄 Paper coming soon</a>
+        <a class="btn" href="https://github.com/kairos-manipulation" target="_blank" rel="noopener">Project</a>
+        <a class="btn" href="#results">🎬 Videos</a>
+        <a class="btn" href="#bibtex">🔖 BibTeX</a>
       </div>
 
-      <div class="hero">
-        <img src="assets/images/teaser.svg" alt="KAIROS overview diagram" />
-        <div class="caption">
-          KAIROS converts an initial observation and task instruction into semantic keyframes, generates future robot videos between them,
-          and uses the resulting future representation for manipulation.
+      <div class="hero-card">
+        <div class="hero-media">
+          <div class="media-placeholder">
+            <img src="assets/images/teaser.svg" alt="KAIROS teaser diagram" />
+          </div>
+        </div>
+        <div class="cap">
+          Overview: initial observation and task command are converted into semantic keyframes. A video model generates longer stable motion between keyframes, and an action model uses the future video latent for control.
         </div>
       </div>
     </header>
 
-    <section id="overview">
-      <h2>Overview</h2>
-      <p class="lead">
-        Long-horizon manipulation requires understanding not only the final goal, but also the important intermediate states of the task.
-        KAIROS addresses this by representing manipulation progress through semantic keyframes such as contact, partial progress,
-        regrasp, and goal state.
-      </p>
-      <p class="lead">
-        Instead of predicting one long video directly, KAIROS breaks the task into shorter and more meaningful intervals.
-        A video model generates motion between neighboring keyframes, and the resulting future video representation can guide an action model.
-      </p>
-    </section>
+    <h2 id="abstract">Abstract</h2>
+    <p>
+      Long-horizon robot manipulation is difficult for visual world models because prediction errors accumulate when the model repeatedly predicts only very short clips. KAIROS studies a keyframe-guided alternative: instead of directly predicting an entire manipulation trajectory as one unstable video, the task is divided into semantic stages. An image model generates task-relevant keyframes such as contact, partial progress, regrasp, and final state. A video model then generates approximately fixed-length clips between neighboring keyframes, where the robot motion is more uniform and easier to model.
+    </p>
+    <p>
+      The generated videos are used not only for visualization, but also as future signals for action learning. A compact video latent from the current frame to the next keyframe can condition an action model, allowing the policy to use predicted future dynamics as structured guidance.
+    </p>
 
-    <section id="approach">
-      <h2>Approach</h2>
+    <div class="pipeline">
+      <div class="pipeline-head">
+        <h3>Animated KAIROS pipeline</h3>
+        <p>Semantic keyframes provide anchors; video generation fills the motion between anchors; action prediction uses the future latent.</p>
+      </div>
 
-      <div class="pipeline">
-        <p class="lead">
-          The method follows a simple pipeline: observe the scene, identify task-relevant future keyframes,
-          generate video segments between them, and use the future representation for robot control.
-        </p>
+      <div class="pipeline-inner">
+        <svg class="pipeline-svg" viewBox="0 0 1160 360" xmlns="http://www.w3.org/2000/svg" aria-label="Animated KAIROS pipeline">
+          <g id="step1" class="step-group visible active">
+            <rect class="step-box" x="20" y="70" width="170" height="118" />
+            <text class="step-icon" x="105" y="105">🖼️</text>
+            <text class="step-label" x="105" y="130">Init Image</text>
+            <text class="step-sub" x="105" y="151">current camera view</text>
+            <text class="step-sub" x="105" y="168">+ task command</text>
+          </g>
 
-        <div class="steps">
-          <div class="step">
-            <div class="icon">🖼️</div>
-            <strong>Observation</strong>
-            <span>Initial image and task instruction</span>
-          </div>
+          <g id="step2" class="step-group">
+            <rect class="step-box" x="220" y="70" width="170" height="118" />
+            <text class="step-icon" x="305" y="105">🧩</text>
+            <text class="step-label" x="305" y="130">Task Stages</text>
+            <text class="step-sub" x="305" y="151">semantic split</text>
+            <text class="step-sub" x="305" y="168">uniform motion clips</text>
+          </g>
 
-          <div class="step">
-            <div class="icon">📍</div>
-            <strong>Keyframes</strong>
-            <span>Contact, progress, and goal states</span>
-          </div>
+          <g id="step3" class="step-group">
+            <rect class="step-box" x="420" y="70" width="170" height="118" />
+            <text class="step-icon" x="505" y="105">📍</text>
+            <text class="step-label" x="505" y="130">Keyframes</text>
+            <text class="step-sub" x="505" y="151">contact / progress</text>
+            <text class="step-sub" x="505" y="168">4–6 anchors</text>
+          </g>
 
-          <div class="step">
-            <div class="icon">🎞️</div>
-            <strong>Video Imagination</strong>
-            <span>Motion between semantic anchors</span>
-          </div>
+          <g id="step4" class="step-group">
+            <rect class="step-box" x="620" y="70" width="170" height="118" />
+            <text class="step-icon" x="705" y="105">🎞️</text>
+            <text class="step-label" x="705" y="130">Video Model</text>
+            <text class="step-sub" x="705" y="151">~81 frames</text>
+            <text class="step-sub" x="705" y="168">between keyframes</text>
+          </g>
 
-          <div class="step">
-            <div class="icon">📦</div>
-            <strong>Future Latent</strong>
-            <span>Compact representation of predicted motion</span>
-          </div>
+          <g id="step5" class="step-group">
+            <rect class="step-box" x="820" y="70" width="170" height="118" />
+            <text class="step-icon" x="905" y="105">📦</text>
+            <text class="step-label" x="905" y="130">Video Latent</text>
+            <text class="step-sub" x="905" y="151">current frame</text>
+            <text class="step-sub" x="905" y="168">to next keyframe</text>
+          </g>
 
-          <div class="step">
-            <div class="icon">🤖</div>
-            <strong>Action Prediction</strong>
-            <span>Future-conditioned robot manipulation</span>
-          </div>
+          <g id="step6" class="step-group">
+            <rect class="step-box" x="470" y="248" width="280" height="82" />
+            <text class="step-icon" x="535" y="284">🤖</text>
+            <text class="step-label" x="625" y="281">Action Model</text>
+            <text class="step-sub" x="625" y="303">future-conditioned robot control</text>
+          </g>
+
+          <path id="seg12" class="flow-progress" d="M190 129 L220 129" />
+          <path id="seg23" class="flow-progress" d="M390 129 L420 129" />
+          <path id="seg34" class="flow-progress" d="M590 129 L620 129" />
+          <path id="seg45" class="flow-progress" d="M790 129 L820 129" />
+          <path id="seg56a" class="flow-progress" d="M905 188 L905 220" />
+          <path id="seg56b" class="flow-progress" d="M905 220 L625 220" />
+          <path id="seg56c" class="flow-progress" d="M625 220 L625 248" />
+
+          <circle id="pulseDot" class="pulse-dot" cx="190" cy="129" r="8" />
+        </svg>
+      </div>
+
+      <div class="note-grid">
+        <div id="note1" class="note active">
+          <strong>1. Start from one observation</strong>
+          The system receives the current image and a natural-language manipulation command.
+        </div>
+        <div id="note2" class="note">
+          <strong>2. Predict semantic anchors</strong>
+          The image model produces keyframes for contact, progress, regrasp, and final state.
+        </div>
+        <div id="note3" class="note">
+          <strong>3. Generate stable clips</strong>
+          The video model fills each interval with a longer but constrained video segment.
+        </div>
+        <div id="note4" class="note">
+          <strong>4. Condition action learning</strong>
+          The action model consumes the future video latent and predicts robot actions.
+        </div>
+      </div>
+    </div>
+
+    <h2 id="approach">Approach</h2>
+    <div class="grid three">
+      <div class="card">
+        <strong>Semantic task decomposition</strong>
+        <p>Raw demonstrations are divided by meaningful task stages so that each video interval has more uniform robot motion.</p>
+      </div>
+      <div class="card">
+        <strong>Keyframe generation</strong>
+        <p>An image model predicts multiple task-relevant future keyframes instead of only one final goal image.</p>
+      </div>
+      <div class="card">
+        <strong>Longer video prediction</strong>
+        <p>A video model generates longer clips between neighboring keyframes, reducing drift compared with repeated short predictions.</p>
+      </div>
+      <div class="card">
+        <strong>Multi-view consistency</strong>
+        <p>Multiple camera views can constrain the predicted geometry and improve spatial consistency for manipulation.</p>
+      </div>
+      <div class="card">
+        <strong>Progress control</strong>
+        <p>Fine-grained progress variables can represent intermediate object states, such as partial drawer or door opening.</p>
+      </div>
+      <div class="card">
+        <strong>Action from future latent</strong>
+        <p>The action model can use video latents from the current frame to the next keyframe as a compact future-conditioning signal.</p>
+      </div>
+    </div>
+
+    <h2 id="keyframes">Keyframe types</h2>
+    <p>
+      KAIROS is designed for tasks where two keyframes are sometimes enough, but more complex tasks require additional anchors.
+      For example, opening a cabinet may require grasping the handle, partially opening the door, releasing, moving inside, pushing, and reaching the final open state.
+    </p>
+
+    <div class="grid four">
+      <div class="card">
+        <strong>Start</strong>
+        <p>Initial scene and robot state.</p>
+        <div class="pill-row"><span class="pill">input</span></div>
+      </div>
+      <div class="card">
+        <strong>Contact</strong>
+        <p>Robot reaches the relevant interaction part.</p>
+        <div class="pill-row"><span class="pill">keyframe 1</span></div>
+      </div>
+      <div class="card">
+        <strong>Progress</strong>
+        <p>Object changes state in a controlled intermediate step.</p>
+        <div class="pill-row"><span class="pill">keyframe 2–5</span></div>
+      </div>
+      <div class="card">
+        <strong>Goal</strong>
+        <p>Final task-complete object state.</p>
+        <div class="pill-row"><span class="pill">final anchor</span></div>
+      </div>
+    </div>
+
+    <h2 id="results">Videos and results</h2>
+    <p>
+      Example manipulation videos showing keyframe-guided future imagination and robot manipulation rollouts.
+    </p>
+
+    <div class="grid two">
+      <div class="video-card">
+        <video controls playsinline muted loop preload="metadata">
+          <source src="assets/videos/open_drawer.mp4" type="video/mp4" />
+        </video>
+        <div class="empty-video">
+          <div><strong>Open drawer</strong>Video preview</div>
         </div>
       </div>
 
-      <div class="grid three" style="margin-top: 18px;">
-        <div class="card">
-          <h3>Semantic Keyframes</h3>
-          <p>
-            Keyframes capture important task stages and help structure long-horizon manipulation into meaningful steps.
-          </p>
-        </div>
-
-        <div class="card">
-          <h3>Stable Video Generation</h3>
-          <p>
-            Video generation is performed between neighboring keyframes, where the motion is more constrained and easier to model.
-          </p>
-        </div>
-
-        <div class="card">
-          <h3>Future-Conditioned Control</h3>
-          <p>
-            The generated future video is encoded into a latent representation that can support action prediction.
-          </p>
+      <div class="video-card">
+        <video controls playsinline muted loop preload="metadata">
+          <source src="assets/videos/open_single_door.mp4" type="video/mp4" />
+        </video>
+        <div class="empty-video">
+          <div><strong>Open single door</strong>Video preview</div>
         </div>
       </div>
-    </section>
 
-    <section id="videos">
-      <h2>Videos</h2>
-      <p class="lead">
-        Example manipulation videos generated or evaluated in the KAIROS pipeline.
-      </p>
-
-      <div class="grid two">
-        <div class="video-card">
-          <video controls playsinline muted loop preload="metadata">
-            <source src="assets/videos/open_drawer.mp4" type="video/mp4" />
-          </video>
-          <div class="video-title">Open drawer</div>
-        </div>
-
-        <div class="video-card">
-          <video controls playsinline muted loop preload="metadata">
-            <source src="assets/videos/open_single_door.mp4" type="video/mp4" />
-          </video>
-          <div class="video-title">Open single door</div>
-        </div>
-
-        <div class="video-card">
-          <video controls playsinline muted loop preload="metadata">
-            <source src="assets/videos/close_drawer.mp4" type="video/mp4" />
-          </video>
-          <div class="video-title">Close drawer</div>
-        </div>
-
-        <div class="video-card">
-          <video controls playsinline muted loop preload="metadata">
-            <source src="assets/videos/push_into_drawer.mp4" type="video/mp4" />
-          </video>
-          <div class="video-title">Push into drawer</div>
+      <div class="video-card">
+        <video controls playsinline muted loop preload="metadata">
+          <source src="assets/videos/close_drawer.mp4" type="video/mp4" />
+        </video>
+        <div class="empty-video">
+          <div><strong>Close drawer</strong>Video preview</div>
         </div>
       </div>
-    </section>
 
-    <footer>
+      <div class="video-card">
+        <video controls playsinline muted loop preload="metadata">
+          <source src="assets/videos/push_into_drawer.mp4" type="video/mp4" />
+        </video>
+        <div class="empty-video">
+          <div><strong>Push into drawer</strong>Video preview</div>
+        </div>
+      </div>
+    </div>
+
+    <h2 id="bibtex">BibTeX</h2>
+    <pre>@misc{khoshnazar2026kairos,
+  title  = {KAIROS: Keyframe-Aligned Long-Horizon Video Imagination for Robot Manipulation},
+  author = {Khoshnazar, Mohammad and Gao, Zhiyuan and Melnik, Andrew and Beetz, Michael},
+  year   = {2026},
+  url    = {https://kairos-manipulation.github.io/kairos-manipulation/}
+}</pre>
+
+    <div class="footer">
       <div>© <span id="year"></span> KAIROS</div>
-      <div>Keyframe-aligned video imagination for robot manipulation</div>
-    </footer>
+      <div>Keyframe-guided robot video/action learning</div>
+    </div>
   </div>
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    const allSteps = ["step1","step2","step3","step4","step5","step6"];
+    const allNotes = ["note1","note2","note3","note4"];
+    const allSegs = ["seg12","seg23","seg34","seg45","seg56a","seg56b","seg56c"];
+
+    function resetPipeline(){
+      allSteps.forEach((id, idx) => {
+        const el = document.getElementById(id);
+        el.classList.remove("visible","active","done");
+        if(idx === 0) el.classList.add("visible","active");
+      });
+
+      allNotes.forEach((id, idx) => {
+        document.getElementById(id).classList.toggle("active", idx === 0);
+      });
+
+      allSegs.forEach(id => {
+        const path = document.getElementById(id);
+        const len = path.getTotalLength();
+        path.style.strokeDasharray = len;
+        path.style.strokeDashoffset = len;
+      });
+
+      const dot = document.getElementById("pulseDot");
+      dot.style.opacity = 0;
+      dot.setAttribute("cx","190");
+      dot.setAttribute("cy","129");
+    }
+
+    function setStepVisible(id){
+      document.getElementById(id).classList.add("visible");
+    }
+
+    function setStepActive(id){
+      allSteps.forEach(stepId => document.getElementById(stepId).classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    function setStepDone(id){
+      const el = document.getElementById(id);
+      el.classList.remove("active");
+      el.classList.add("done");
+    }
+
+    function setNotes(activeCount){
+      allNotes.forEach((id, idx) => {
+        document.getElementById(id).classList.toggle("active", idx < activeCount);
+      });
+    }
+
+    function animateSegment(pathId, fromStepId, toStepId, duration, callback){
+      const path = document.getElementById(pathId);
+      const dot = document.getElementById("pulseDot");
+      const len = path.getTotalLength();
+
+      setStepActive(fromStepId);
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+      dot.style.opacity = 1;
+
+      let start = null;
+
+      function frame(ts){
+        if(!start) start = ts;
+        const p = Math.min((ts - start) / duration, 1);
+        path.style.strokeDashoffset = len * (1 - p);
+
+        const pt = path.getPointAtLength(len * p);
+        dot.setAttribute("cx", pt.x);
+        dot.setAttribute("cy", pt.y);
+
+        if(p < 1){
+          requestAnimationFrame(frame);
+        }else{
+          if(toStepId !== fromStepId){
+            setStepDone(fromStepId);
+            setStepVisible(toStepId);
+            setStepActive(toStepId);
+          }
+          if(callback) callback();
+        }
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    function runPipeline(){
+      resetPipeline();
+
+      setTimeout(() => {
+        animateSegment("seg12","step1","step2",650,() => {
+          setTimeout(() => {
+            animateSegment("seg23","step2","step3",650,() => {
+              setNotes(2);
+              setTimeout(() => {
+                animateSegment("seg34","step3","step4",650,() => {
+                  setNotes(3);
+                  setTimeout(() => {
+                    animateSegment("seg45","step4","step5",650,() => {
+                      setTimeout(() => {
+                        animateSegment("seg56a","step5","step5",320,() => {
+                          animateSegment("seg56b","step5","step5",850,() => {
+                            animateSegment("seg56c","step5","step6",280,() => {
+                              setNotes(4);
+                              setTimeout(runPipeline,1800);
+                            });
+                          });
+                        });
+                      },300);
+                    });
+                  },300);
+                });
+              },300);
+            });
+          },300);
+        });
+      },450);
+    }
+
+    function hideBrokenVideos(){
+      document.querySelectorAll(".video-card").forEach(card => {
+        const video = card.querySelector("video");
+        const placeholder = card.querySelector(".empty-video");
+
+        if(!video || !placeholder) return;
+
+        video.addEventListener("loadeddata", () => {
+          placeholder.style.display = "none";
+          video.style.display = "block";
+        });
+
+        video.addEventListener("error", () => {
+          video.style.display = "none";
+          placeholder.style.display = "grid";
+        });
+
+        setTimeout(() => {
+          if(video.readyState === 0){
+            video.style.display = "none";
+            placeholder.style.display = "grid";
+          }
+        }, 700);
+      });
+    }
+
+    runPipeline();
+    hideBrokenVideos();
   </script>
 </body>
 </html>
