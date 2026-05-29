@@ -1,13 +1,14 @@
+```html id="kairos_full_html_corrected"
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KAIROS: Keyframe-Conditioned Visual World Models for Long-Horizon Robot Manipulation</title>
-  <meta name="description" content="KAIROS builds keyframe-conditioned visual world models that support long-horizon robot behavior learning through imagined video rollouts and policy-conditioning latents." />
+  <title>KAIROS: Keyframe-Aligned Long-Horizon Video Imagination for Robot Manipulation</title>
+  <meta name="description" content="KAIROS generates semantic keyframes, long-horizon robot videos, and video-latent action signals for manipulation." />
 
-  <meta property="og:title" content="KAIROS: Keyframe-Conditioned Visual World Models for Long-Horizon Robot Manipulation" />
-  <meta property="og:description" content="Keyframe-conditioned visual world models predict long-horizon robot futures, enabling action prediction, policy learning, and behavior validation." />
+  <meta property="og:title" content="KAIROS: Keyframe-Aligned Long-Horizon Video Imagination for Robot Manipulation" />
+  <meta property="og:description" content="Semantic keyframes as anchors for stable long-horizon robot video and action prediction." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="assets/images/teaser.svg" />
 
@@ -501,21 +502,26 @@
     </nav>
 
     <header>
-      <div class="tag">Temporary project page · keyframe-conditioned visual world models for robot behavior learning</div>
+      <div class="tag">Keyframe-guided robot video/action learning</div>
 
-      <h1>KAIROS: Keyframe-Conditioned Visual World Models for Long-Horizon Robot Manipulation</h1>
+      <h1>KAIROS: Keyframe-Aligned Long-Horizon Video Imagination for Robot Manipulation</h1>
 
       <p class="subtitle">
-        We build a keyframe-conditioned visual world model that predicts long-horizon robot futures as semantic keyframes and stable video rollouts, then uses the resulting video latents to support action prediction, policy learning, and behavior validation.
+        We generate semantic keyframes as long-horizon anchors, synthesize stable robot videos between them,
+        and use the resulting future video latents to guide action prediction.
       </p>
 
+      <div class="authors">
+        <strong>Mohammad Khoshnazar</strong> · <strong>Zhiyuan Gao</strong> · <strong>Andrew Melnik</strong> · <strong>Michael Beetz</strong>
+      </div>
+
       <div class="affil">
-        Institute for Artificial Intelligence · University of Bremen · Karlsruhe Institute of Technology
+        Institute for Artificial Intelligence · University of Bremen
       </div>
 
       <div class="buttons">
         <a class="btn primary" href="#" target="_blank" rel="noopener">📄 Paper coming soon</a>
-        <a class="btn" href="https://github.com/kairos-manipulation" target="_blank" rel="noopener">💻 GitHub</a>
+        <a class="btn" href="https://github.com/kairos-manipulation" target="_blank" rel="noopener">Project</a>
         <a class="btn" href="#results">🎬 Videos</a>
         <a class="btn" href="#bibtex">🔖 BibTeX</a>
       </div>
@@ -534,11 +540,10 @@
 
     <h2 id="abstract">Abstract</h2>
     <p>
-      Long-horizon robot manipulation requires policies to reason about how the scene will evolve before acting. KAIROS studies a keyframe-conditioned visual world model for robot behavior learning. Instead of predicting only short future clips, the method decomposes a manipulation task into semantic stages and predicts task-relevant keyframes such as contact, partial progress, regrasp, and final state. A video model then generates longer, more stable rollouts between neighboring keyframes, where the motion pattern is more uniform and easier to model.
+      Long-horizon robot manipulation is difficult for visual world models because prediction errors accumulate when the model repeatedly predicts only very short clips. KAIROS studies a keyframe-guided alternative: instead of directly predicting an entire manipulation trajectory as one unstable video, the task is divided into semantic stages. An image model generates task-relevant keyframes such as contact, partial progress, regrasp, and final state. A video model then generates approximately fixed-length clips between neighboring keyframes, where the robot motion is more uniform and easier to model.
     </p>
-
     <p>
-      The generated videos are not used only for visualization. They are encoded into compact future video latents that condition an action model for robot control. This makes KAIROS a step toward imagination-based behavior learning, where predicted future dynamics can support policy learning, reinforcement-learning fine-tuning, planning, and validation before real-world deployment.
+      The generated videos are used not only for visualization, but also as future signals for action learning. A compact video latent from the current frame to the next keyframe can condition an action model, allowing the policy to use predicted future dynamics as structured guidance.
     </p>
 
     <div class="pipeline">
@@ -643,10 +648,6 @@
         <p>A video model generates longer clips between neighboring keyframes, reducing drift compared with repeated short predictions.</p>
       </div>
       <div class="card">
-        <strong>Visual world model for imagined rollouts</strong>
-        <p>KAIROS treats the keyframe-guided video generator as a visual world model: given the current observation, task command, and semantic anchors, it predicts plausible future visual dynamics. These imagined rollouts can be used as structured experience for policy learning, reinforcement-learning fine-tuning, planning, and robustness validation.</p>
-      </div>
-      <div class="card">
         <strong>Multi-view consistency</strong>
         <p>Multiple camera views can constrain the predicted geometry and improve spatial consistency for manipulation.</p>
       </div>
@@ -655,8 +656,8 @@
         <p>Fine-grained progress variables can represent intermediate object states, such as partial drawer or door opening.</p>
       </div>
       <div class="card">
-        <strong>Action and behavior learning from future latents</strong>
-        <p>The action model uses video latents from the current frame to the next keyframe as a compact future-conditioning signal. This connects predictive visual dynamics with robot behavior learning, allowing policies to act with access to an imagined short-horizon future rather than only the current observation.</p>
+        <strong>Action from future latent</strong>
+        <p>The action model can use video latents from the current frame to the next keyframe as a compact future-conditioning signal.</p>
       </div>
     </div>
 
@@ -691,94 +692,58 @@
 
     <h2 id="results">Videos and results</h2>
     <p>
-      This section will show the full KAIROS pipeline: generated semantic keyframes, generated long-horizon videos between keyframes, and robot action rollouts conditioned on predicted future video latents. Current embedded clips are placeholders for demonstration and layout testing.
+      Example manipulation videos showing keyframe-guided future imagination and robot manipulation rollouts.
     </p>
 
     <div class="grid two">
       <div class="video-card">
         <video controls playsinline muted loop preload="metadata">
-          <source src="assets/videos/close_jar.mp4" type="video/mp4" />
+          <source src="assets/videos/open_drawer.mp4" type="video/mp4" />
         </video>
         <div class="empty-video">
-          <div><strong>Close jar</strong>rlbench demo clip</div>
+          <div><strong>Open drawer</strong>Video preview</div>
         </div>
       </div>
 
       <div class="video-card">
         <video controls playsinline muted loop preload="metadata">
-          <source src="assets/videos/meat_off_grill.mp4" type="video/mp4" />
+          <source src="assets/videos/open_single_door.mp4" type="video/mp4" />
         </video>
         <div class="empty-video">
-          <div><strong>Meat off grill</strong>rlbench demo clip</div>
+          <div><strong>Open single door</strong>Video preview</div>
         </div>
       </div>
 
       <div class="video-card">
         <video controls playsinline muted loop preload="metadata">
-          <source src="assets/videos/put_groceries_in_cupboard.mp4" type="video/mp4" />
+          <source src="assets/videos/close_drawer.mp4" type="video/mp4" />
         </video>
         <div class="empty-video">
-          <div><strong>Put groceries in cupboard</strong>rlbench demo clip</div>
+          <div><strong>Close drawer</strong>Video preview</div>
         </div>
       </div>
 
       <div class="video-card">
         <video controls playsinline muted loop preload="metadata">
-          <source src="assets/videos/reach_and_drag_1.mp4" type="video/mp4" />
+          <source src="assets/videos/push_into_drawer.mp4" type="video/mp4" />
         </video>
         <div class="empty-video">
-          <div><strong>Reach and drag</strong>rlbench demo clip</div>
-        </div>
-      </div>
-
-      <div class="video-card">
-        <video controls playsinline muted loop preload="metadata">
-          <source src="assets/videos/reach_and_drag_2.mp4" type="video/mp4" />
-        </video>
-        <div class="empty-video">
-          <div><strong>Reach and drag (alt)</strong>rlbench demo clip</div>
-        </div>
-      </div>
-
-      <div class="video-card">
-        <video controls playsinline muted loop preload="metadata">
-          <source src="assets/videos/slide_block_to_target.mp4" type="video/mp4" />
-        </video>
-        <div class="empty-video">
-          <div><strong>Slide block to target</strong>rlbench demo clip</div>
-        </div>
-      </div>
-
-      <div class="video-card">
-        <video controls playsinline muted loop preload="metadata">
-          <source src="assets/videos/stack_blocks.mp4" type="video/mp4" />
-        </video>
-        <div class="empty-video">
-          <div><strong>Stack blocks</strong>rlbench demo clip</div>
-        </div>
-      </div>
-
-      <div class="video-card">
-        <video controls playsinline muted loop preload="metadata">
-          <source src="assets/videos/stack_cups.mp4" type="video/mp4" />
-        </video>
-        <div class="empty-video">
-          <div><strong>Stack cups</strong>rlbench demo clip</div>
+          <div><strong>Push into drawer</strong>Video preview</div>
         </div>
       </div>
     </div>
 
     <h2 id="bibtex">BibTeX</h2>
     <pre>@misc{khoshnazar2026kairos,
-  title  = {KAIROS: Keyframe-Conditioned Visual World Models for Long-Horizon Robot Manipulation},
+  title  = {KAIROS: Keyframe-Aligned Long-Horizon Video Imagination for Robot Manipulation},
   author = {Khoshnazar, Mohammad and Gao, Zhiyuan and Melnik, Andrew and Beetz, Michael},
   year   = {2026},
-  url    = {https://kairos-manipulation.github.io/}
+  url    = {https://kairos-manipulation.github.io/kairos-manipulation/}
 }</pre>
 
     <div class="footer">
       <div>© <span id="year"></span> KAIROS</div>
-      <div>Built with GitHub Pages</div>
+      <div>Keyframe-guided robot video/action learning</div>
     </div>
   </div>
 
@@ -934,3 +899,4 @@
   </script>
 </body>
 </html>
+```
